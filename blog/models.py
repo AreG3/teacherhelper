@@ -7,7 +7,7 @@ from django.urls import reverse
 class Post(models.Model):
     title = models.CharField(max_length=100, verbose_name='Temat zajęć: ')
     content = models.TextField(verbose_name='Materiały (linki, ciekawostki itp.): ', )
-    uploaded_file = models.FileField(null=True, blank=True, upload_to='uploaded_files/', verbose_name='Dodaj pliki')
+    uploaded_file = models.FileField(null=True, blank=True, upload_to='uploaded_files/', verbose_name='Dodaj pliki :')
     date_posted = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 

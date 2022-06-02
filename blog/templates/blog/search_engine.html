@@ -6,7 +6,9 @@
         <h1>Oto wyniki wyszukiwania ,,{{ searched }}": </h1>
         <br/>
         {% for post in posts %}
-            <a href="{% url 'post-detail' post.id %}">{{ post }}</a><br/>
+            {% if post.visibility == True or post.author.username == user.username %}
+                <a href="{% url 'post-detail' post.id %}">{{ post }}</a><br/>
+            {% endif %}
         {% endfor %}
 
     {% else %}

@@ -2,7 +2,7 @@
 {% block content %}
     <h1 class="mb-3">Posty użytkownika: {{ view.kwargs.username }} ({{ page_obj.paginator.count }})</h1>
     {% for post in posts %}
-        {% if post.visibility == True %}
+        {% if post.visibility == True or post.author.username == user.username %}
             <article class="media content-section">
             <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
             <div class="media-body">

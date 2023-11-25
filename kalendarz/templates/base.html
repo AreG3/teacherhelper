@@ -24,7 +24,7 @@
                center: 'title',
                right: 'month,agendaWeek,agendaDay'
            },
-           events: '/all_events',
+           events: '/kalendarz/all_events',
            selectable: true,
            selectHelper: true,
            editable: true,
@@ -36,7 +36,7 @@
                    var end = $.fullCalendar.formatDate(end, "Y-MM-DD HH:mm:ss");
                    $.ajax({
                        type: "GET",
-                       url: '/add_event',
+                       url: '/kalendarz/add_event',
                        data: {'title': title, 'start': start, 'end': end},
                        dataType: "json",
                        success: function (data) {
@@ -56,7 +56,7 @@
                var id = event.id;
                $.ajax({
                    type: "GET",
-                   url: '/update',
+                   url: '/kalendarz/update',
                    data: {'title': title, 'start': start, 'end': end, 'id': id},
                    dataType: "json",
                    success: function (data) {
@@ -76,7 +76,7 @@
                var id = event.id;
                $.ajax({
                    type: "GET",
-                   url: '/update',
+                   url: '/kalendarz/update',
                    data: {'title': title, 'start': start, 'end': end, 'id': id},
                    dataType: "json",
                    success: function (data) {
@@ -94,7 +94,7 @@
                    var id = event.id;
                    $.ajax({
                        type: "GET",
-                       url: '/remove',
+                       url: '/kalendarz/remove',
                        data: {'id': id},
                        dataType: "json",
                        success: function (data) {

@@ -32,6 +32,10 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name='password_reset_complete'),
     path('kalendarz/', views.index, name='index'),
+    path('kalendarz/all_events/', views.all_events, name='all_events'),
+    path('kalendarz/add_event/', views.add_event, name='add_event'),
+    path('kalendarz/update/', views.update, name='update'),
+    path('kalendarz/remove/', views.remove, name='remove'),
     path('', include('blog.urls')),
 ]
 

@@ -4,6 +4,13 @@ from kalendarz.models import Events
 from django.contrib.auth.decorators import login_required
 from users.forms import EventForm  # Dodaj ten import
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_protect
+from django.middleware.csrf import get_token
 
 
 @login_required
@@ -84,38 +91,94 @@ def add_event(request):
         return JsonResponse(data, status=400)
 
 
-
-
-
-@login_required
-def update(request):
-    start = request.GET.get("start", None)
-    end = request.GET.get("end", None)
-    title = request.GET.get("title", None)
-    id = request.GET.get("id", None)
-
-    # Pobierz zalogowanego użytkownika
-    user_profile = request.user.profile
-
-    event = Events.objects.get(id=id, user_profile=user_profile)
-    event.start = start
-    event.end = end
-    event.name = title
-    event.save()
-
-    data = {}
-    return JsonResponse(data)
-
-
+@csrf_protect
+@require_http_methods(["DELETE", "GET"])
 @login_required
 def remove(request):
-    id = request.GET.get("id", None)
+    if request.method == 'DELETE':
+        data = json.loads(request.body)
+        event_id = data.get("id", None)
 
-    # Pobierz zalogowanego użytkownika
-    user_profile = request.user.profile
+        # Pobierz zalogowanego użytkownika
+        user = request.user
 
-    event = Events.objects.get(id=id, user_profile=user_profile)
-    event.delete()
+        try:
+            event = Events.objects.get(id=event_id, user_profile=user)
+            event.delete()
 
-    data = {}
-    return JsonResponse(data)
+            response_data = {}
+            return JsonResponse(response_data)
+        except Events.DoesNotExist:
+            response_data = {'error': 'Event not found'}
+            return JsonResponse(response_data, status=404)
+    elif request.method == 'GET':
+        data = request.GET.dict()
+        event_id = data.get("id", None)
+
+        # Pobierz zalogowanego użytkownika
+        user = request.user
+
+        try:
+            event = Events.objects.get(id=event_id, user_profile=user)
+            event.delete()
+
+            response_data = {}
+            return JsonResponse(response_data)
+        except Events.DoesNotExist:
+            response_data = {'error': 'Event not found'}
+            return JsonResponse(response_data, status=404)
+    else:
+        response_data = {'error': 'Invalid request method'}
+        return JsonResponse(response_data, status=400)
+
+@csrf_protect
+@require_http_methods(["PUT", "GET"])
+@login_required
+def update(request):
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        start = data.get("start", None)
+        end = data.get("end", None)
+        title = data.get("title", None)
+        event_id = data.get("id", None)
+
+        # Pobierz zalogowanego użytkownika
+        user = request.user
+
+        try:
+            event = Events.objects.get(id=event_id, user_profile=user)
+            event.start = start
+            event.end = end
+            event.name = title
+            event.save()
+
+            response_data = {}
+            return JsonResponse(response_data)
+        except Events.DoesNotExist:
+            response_data = {'error': 'Event not found'}
+            return JsonResponse(response_data, status=404)
+    elif request.method == 'GET':
+        data = request.GET.dict()
+        start = data.get("start", None)
+        end = data.get("end", None)
+        title = data.get("title", None)
+        event_id = data.get("id", None)
+
+        # Pobierz zalogowanego użytkownika
+        user = request.user
+
+        try:
+            event = Events.objects.get(id=event_id, user_profile=user)
+            event.start = start
+            event.end = end
+            event.name = title
+            event.save()
+
+            response_data = {}
+            return JsonResponse(response_data)
+        except Events.DoesNotExist:
+            response_data = {'error': 'Event not found'}
+            return JsonResponse(response_data, status=404)
+    else:
+        response_data = {'error': 'Invalid request method'}
+        return JsonResponse(response_data, status=400)

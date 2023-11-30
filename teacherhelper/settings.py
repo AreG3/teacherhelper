@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from django.utils import timezone
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +28,6 @@ SECRET_KEY = 'django-insecure-xf!jo@4$io+b1gp678h-ox$65*7c8+f2=scuu54^-af2%x77kx
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 

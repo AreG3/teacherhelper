@@ -34,8 +34,8 @@ urlpatterns = [
     path('kalendarz/', views.index, name='index'),
     path('kalendarz/all_events/', views.all_events, name='all_events'),
     path('kalendarz/add_event/', views.add_event, name='add_event'),
-    path('kalendarz/update/', views.update, name='update'),
-    path('kalendarz/remove/', views.remove, name='remove'),
+    path('kalendarz/remove/<int:id>/', views.remove, name='remove'),
+    path('kalendarz/update/<int:id>/', views.update, name='update'),
     path('', include('blog.urls')),
 ]
 

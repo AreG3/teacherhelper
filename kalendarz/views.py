@@ -92,13 +92,14 @@ def add_event(request):
         return JsonResponse(data)
 
 
+@csrf_protect
+@require_http_methods(["POST", "GET"])
 @login_required
-@require_GET
 def remove(request, id):
     # Pobierz zalogowanego użytkownika
     user = request.user
 
-    if request.method == 'POST':
+    if request.method == 'POST' or request.method == 'GET':
         event = get_object_or_404(Events, id=id, user_profile=user)
         event.delete()
 
@@ -107,6 +108,7 @@ def remove(request, id):
     else:
         data = {'error': 'Invalid request method'}
         return JsonResponse(data, status=400)
+
 
 
 

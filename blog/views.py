@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post
+from users.forms import FileForm
 
 
 def home(request):
@@ -28,8 +29,9 @@ class UserPostListView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Post.objects.filter(author=user).order_by('-date_posted')
+        if Post.visibility:
+            user = get_object_or_404(User, username=self.kwargs.get('username'))
+            return Post.objects.filter(author=user).order_by('-date_posted')
 
 
 class PostDetailView(DetailView):
@@ -38,7 +40,7 @@ class PostDetailView(DetailView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'uploaded_file', 'visibility']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -47,7 +49,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'uploaded_file', 'visibility']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -73,3 +75,12 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 def about(request):
     return render(request, 'blog/about.html', {'title': 'About'})
+
+
+def search_engine(request):
+    if request.method == "POST":
+        searched = request.POST.get('searched')
+        posts = Post.objects.filter(title__contains=searched)
+        return render(request, 'blog/search_engine.html', {'searched': searched, 'posts': posts})
+    else:
+        return render(request, 'blog/search_engine.html', {})

@@ -19,6 +19,7 @@ from django.urls import path, include
 from users import views as user_views
 from django.conf import settings
 from django.conf.urls.static import static
+from kalendarz import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +31,11 @@ urlpatterns = [
     path('password-reset/done', auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'), name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name='password_reset_complete'),
+    path('kalendarz/', views.index, name='index'),
+    path('kalendarz/all_events/', views.all_events, name='all_events'),
+    path('kalendarz/add_event/', views.add_event, name='add_event'),
+    path('kalendarz/remove/<int:id>/', views.remove, name='remove'),
+    path('kalendarz/update/<int:id>/', views.update, name='update'),
     path('', include('blog.urls')),
 ]
 

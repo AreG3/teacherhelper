@@ -32,8 +32,8 @@
            select: function (start, end, allDay) {
                var title = prompt("Enter Event Title");
                if (title) {
-                   var start = $.fullCalendar.formatDate(start, "Y-MM-DD HH:mm:ss");
-                   var end = $.fullCalendar.formatDate(end, "Y-MM-DD HH:mm:ss");
+                   var start = moment.utc(start).toISOString();
+                   var end = moment.utc(end).toISOString();
                    $.ajax({
                        type: "GET",
                        url: '{% url "add_event" %}',
@@ -50,8 +50,8 @@
                }
            },
             eventResize: function (event) {
-                var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
-                var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+                var start = moment(event.start).toISOString();
+                var end = moment(event.end).toISOString();
                 var title = event.title;
                 var id = event.id;
                 $.ajax({
@@ -70,8 +70,8 @@
             },
 
             eventDrop: function (event) {
-                var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
-                var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+                var start = moment(event.start).toISOString();
+                var end = moment(event.end).toISOString();
                 var title = event.title;
                 var id = event.id;
                 $.ajax({

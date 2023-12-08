@@ -1,5 +1,9 @@
+import datetime
+
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.utils import timezone
+
 from kalendarz.models import Events
 from django.contrib.auth.decorators import login_required
 from users.forms import EventForm  # Dodaj ten import
@@ -92,6 +96,8 @@ def add_event(request):
         return JsonResponse(data)
 
 
+
+
 @csrf_protect
 @require_http_methods(["POST", "GET"])
 @login_required
@@ -121,9 +127,19 @@ def update(request, id):
     event = get_object_or_404(Events, id=id, user_profile=user)
 
     # Odczytaj dane z parametrów zapytania zamiast z ciała
-    event.start = request.GET.get("start", None)
-    event.end = request.GET.get("end", None)
-    event.name = request.GET.get("title", None)
+    start_param = request.GET.get("start", None)
+    end_param = request.GET.get("end", None)
+    title = request.GET.get("title", None)
+
+    # Przekształć ciągi znaków na daty
+    start = timezone.make_aware(datetime.datetime.strptime(start_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc)
+    end = timezone.make_aware(datetime.datetime.strptime(end_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc)
+
+    # Przypisz wartości do modelu
+    event.start = start
+    event.end = end
+    event.name = title
+
     event.save()
 
     response_data = {}

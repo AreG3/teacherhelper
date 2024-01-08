@@ -30,14 +30,18 @@
            editable: true,
            eventLimit: true,
            select: function (start, end, allDay) {
+               // Dodaj pole checkboxa do okna dialogowego
                var title = prompt("Enter Event Title");
+               var allDay = confirm("Is it an all-day event?");
+
                if (title) {
-                   var start = moment.utc(start).toISOString();
-                   var end = moment.utc(end).toISOString();
+                   var start = allDay ? moment(start).startOf('day').toISOString() : moment.utc(start).toISOString();
+                   var end = allDay ? moment(end).endOf('day').toISOString() : moment.utc(end).toISOString();
+
                    $.ajax({
                        type: "GET",
                        url: '{% url "add_event" %}',
-                       data: {'title': title, 'start': start, 'end': end},
+                       data: {'title': title, 'start': start, 'end': end, 'all_day': allDay},
                        dataType: "json",
                        success: function (data) {
                            calendar.fullCalendar('refetchEvents');

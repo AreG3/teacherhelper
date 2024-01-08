@@ -84,12 +84,16 @@ def add_event(request):
         start = request.GET.get("start", None)
         end = request.GET.get("end", None)
         title = request.GET.get("title", None)
+        all_day_param = request.GET.get("all_day", None)  # Dodaj nowy parametr 'all_day'
 
         # Pobierz zalogowanego użytkownika
         user = request.user
 
+        # Zmiana wartości na typ boolowski
+        all_day = all_day_param.lower() == 'true' if all_day_param is not None else False
+
         # Przypisz użytkownika do nowego zdarzenia
-        event = Events(user_profile=user, name=str(title), start=start, end=end)
+        event = Events(user_profile=user, name=str(title), start=start, end=end, all_day=all_day)
         event.save()
 
         data = {}
@@ -130,10 +134,17 @@ def update(request, id):
     start_param = request.GET.get("start", None)
     end_param = request.GET.get("end", None)
     title = request.GET.get("title", None)
+    all_day = request.GET.get("all_day", None)  # Dodaj nowy parametr 'all_day'
 
     # Przekształć ciągi znaków na daty
-    start = timezone.make_aware(datetime.datetime.strptime(start_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc)
-    end = timezone.make_aware(datetime.datetime.strptime(end_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc)
+    if all_day:
+        # Zdarzenie całodniowe
+        start = timezone.make_aware(datetime.datetime.strptime(start_param, "%Y-%m-%d"))
+        end = timezone.make_aware(datetime.datetime.strptime(end_param, "%Y-%m-%d"))
+    else:
+        # Zdarzenie z godzinami
+        start = timezone.make_aware(datetime.datetime.strptime(start_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc)
+        end = timezone.make_aware(datetime.datetime.strptime(end_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc)
 
     # Przypisz wartości do modelu
     event.start = start

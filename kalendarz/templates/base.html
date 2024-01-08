@@ -43,8 +43,8 @@
                        data: {'title': title, 'start': start, 'end': end, 'all_day': allDay},
                        dataType: "json",
                        success: function (data) {
-                           calendar.fullCalendar('refetchEvents');
                            alert("Added Successfully");
+                           location.reload();
                        },
                        error: function (data) {
                            alert('There is a problem!!!');

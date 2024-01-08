@@ -57,7 +57,7 @@ def all_events(request):
             'title': event.name,
             'id': event.id,
             'start': event.start.strftime("%m/%d/%Y, %H:%M:%S"),
-            'end': event.end.strftime("%m/%d/%Y, %H:%M:%S"),
+            'end': event.end.strftime("%m/%d/%Y, %H:%M:%S") if event.end else None,
         })
 
     return JsonResponse(out, safe=False)

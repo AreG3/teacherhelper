@@ -32,9 +32,8 @@
            select: function (start, end, allDay) {
                // Dodaj pole checkboxa do okna dialogowego
                var title = prompt("Enter Event Title");
-               var allDay = confirm("Is it an all-day event?");
-
                if (title) {
+                   var allDay = confirm("Is it an all-day event?");
                    var start = allDay ? moment(start).startOf('day').toISOString() : moment.utc(start).toISOString();
                    var end = allDay ? moment(end).endOf('day').toISOString() : moment.utc(end).toISOString();
 

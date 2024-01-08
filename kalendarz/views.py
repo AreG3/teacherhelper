@@ -122,8 +122,9 @@ def remove(request, id):
 
 
 
-@login_required
+@csrf_protect
 @require_GET
+@login_required
 def update(request, id):
     # Pobierz zalogowanego użytkownika
     user = request.user
@@ -140,11 +141,11 @@ def update(request, id):
     if all_day:
         # Zdarzenie całodniowe
         start = timezone.make_aware(datetime.datetime.strptime(start_param, "%Y-%m-%d"))
-        end = timezone.make_aware(datetime.datetime.strptime(end_param, "%Y-%m-%d"))
+        end = timezone.make_aware(datetime.datetime.strptime(end_param, "%Y-%m-%d")) if end_param else None
     else:
         # Zdarzenie z godzinami
         start = timezone.make_aware(datetime.datetime.strptime(start_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc)
-        end = timezone.make_aware(datetime.datetime.strptime(end_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc)
+        end = timezone.make_aware(datetime.datetime.strptime(end_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc) if end_param else None
 
     # Przypisz wartości do modelu
     event.start = start

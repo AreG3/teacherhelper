@@ -8,13 +8,33 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
+    <style>
+        .container {
+            text-align: center; /* Centrowanie tekstu */
+        }
+
+        h4 {
+            font-size: 36px; /* Zmiana wielkości czcionki */
+            font-family: 'YourChosenFont', sans-serif; /* Zmiana czcionki */
+        }
+
+        /* Dodaj styl dla przycisku */
+        #homeButton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+    </style>
 </head>
 <body>
+<a id="homeButton" class="btn btn-primary" href="{% url 'blog-home' %}">Strona Główna</a>
+<div style="margin-top: 20px;">
+</div>
 <div class="container">
- <div class="row">
-    <h4>Python Django Ajax FullCalender CRUD (Create, Read, Update and Delete)</h4>
-    {% block content %}{% endblock %}
- </div>
+    <div class="row">
+        <h4>Kalendarz</h4>
+        {% block content %}{% endblock %}
+    </div>
 </div>
 <script>
    $(document).ready(function () {

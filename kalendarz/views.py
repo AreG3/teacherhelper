@@ -1,21 +1,14 @@
 import datetime
 
-from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
-
 from kalendarz.models import Events
 from django.contrib.auth.decorators import login_required
-from users.forms import EventForm  # Dodaj ten import
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404
-import json
+from users.forms import EventForm
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods, require_POST, require_GET
+from django.views.decorators.http import require_http_methods, require_GET
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_protect
-from django.middleware.csrf import get_token
-from django.http import HttpResponseNotAllowed
 
 
 

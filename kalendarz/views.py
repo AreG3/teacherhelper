@@ -133,7 +133,7 @@ def update(request, id):
     # Przekształć ciągi znaków na daty
     if all_day:
         # Zdarzenie całodniowe
-        start = timezone.make_aware(datetime.datetime.strptime(start_param, "%Y-%m-%d"))
+        start = timezone.make_aware(datetime.datetime.strptime(start_param, "%Y-%m-%dT%H:%M:%S"), timezone=timezone.utc)
         end = timezone.make_aware(datetime.datetime.strptime(end_param, "%Y-%m-%d")) if end_param else None
     else:
         # Zdarzenie z godzinami

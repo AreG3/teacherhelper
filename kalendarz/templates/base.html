@@ -52,9 +52,8 @@
             var title = prompt("Wpisz tytuł wydarzenia");
             if (title) {
                 var allDay = confirm("Czy to wydarzenie całodniowe?");
-                var start = allDay ? moment(start).startOf('day').toISOString() : moment.utc(start).toISOString();
-                var end = allDay ? moment(end).endOf('day').toISOString() : moment.utc(end).toISOString();
-
+                var start = allDay ? moment.utc(start).startOf('day').toISOString() : moment.utc(start).toISOString();
+                var end = allDay ? moment.utc(end).startOf('day').subtract(1, 'minute').toISOString() : moment.utc(end).toISOString();
                 $.ajax({
                     type: "GET",
                     url: '{% url "add_event" %}',

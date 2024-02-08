@@ -62,10 +62,11 @@
             <h3>Pasek nawigacyjny</h3>
             <p class='text-muted'>Sprawdź co nowego!
               <ul class="list-group">
-                <li class="list-group-item list-group-item-light">Najnowsze Posty</li>
+                <li class="list-group-item list-group-item-light"><a href="{% url "blog-home" %}">Najnowsze Posty</a></li>
                 <li class="list-group-item list-group-item-light">Ogłoszenia</li>
-                <li class="list-group-item list-group-item-light" onclick="window.location.href='/kalendarz/'" id="kalendarz-link">Kalendarz</li>
-                <li class="list-group-item list-group-item-light">Pozostałe</li>
+                {% if user.is_authenticated %}
+                <li class="list-group-item list-group-item-light" id="kalendarz-link"><a href="/kalendarz/">Kalendarz</a></li>
+                {% endif %}
               </ul>
             </p>
           </div>

@@ -42,17 +42,6 @@ def profile(request):
     return render(request, 'users/profile.html', context)
 
 
-#def create_group(request):
-#    if request.method == 'POST':
-#        form = GroupForm(request.POST)
-#        if form.is_valid():
-#            group = form.save()
-#            return redirect('group_detail', pk=group.pk)
-#    else:
-#        form = GroupForm()
-#    return render(request, 'users/create_group.html', {'form': form})
-
-
 def create_group(request):
     if request.method == 'POST':
         form = GroupForm(request.POST)

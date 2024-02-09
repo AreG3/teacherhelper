@@ -46,3 +46,7 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = ['name', 'description']
+        labels = {
+            'name': 'Nazwa grupy',
+            'description': 'Opis grupy'
+        }

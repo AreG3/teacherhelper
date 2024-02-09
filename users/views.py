@@ -6,6 +6,7 @@ from .forms import GroupForm
 from django.shortcuts import get_object_or_404
 from .models import Group
 from .forms import AddUserToGroupForm
+from django.db.models import Q
 
 
 def register(request):
@@ -62,8 +63,13 @@ def create_group(request):
 
 @login_required
 def group_list(request):
-    user_groups = Group.objects.filter(owner=request.user)
-    return render(request, 'users/group_list.html', {'user_groups': user_groups})
+    if request.user.is_authenticated:
+        user_groups = Group.objects.filter(owner=request.user)
+        if not user_groups.exists():
+            user_groups = Group.objects.filter(members=request.user)
+        return render(request, 'users/group_list.html', {'user_groups': user_groups})
+    else:
+        return render(request, 'users/group_list.html', {})
 
 
 @login_required
@@ -87,6 +93,7 @@ def add_user_to_group(request, group_id):
         if form.is_valid():
             user = form.cleaned_data['user']
             group.members.add(user)
+            messages.success(request, f'Dodano użytkownika {user.username} do grupy {group.name}.')
             return redirect('group_detail', group_id=group.id)
     else:
         form = AddUserToGroupForm()

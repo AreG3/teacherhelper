@@ -20,6 +20,7 @@ from users import views as user_views
 from django.conf import settings
 from django.conf.urls.static import static
 from kalendarz import views
+from users.views import create_group
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,6 +37,7 @@ urlpatterns = [
     path('kalendarz/add_event/', views.add_event, name='add_event'),
     path('kalendarz/remove/<int:id>/', views.remove, name='remove'),
     path('kalendarz/update/<int:id>/', views.update, name='update'),
+    path('create_group/', create_group, name='create_group'),
     path('', include('blog.urls')),
 ]
 

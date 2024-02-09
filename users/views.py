@@ -1,3 +1,4 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -74,15 +75,22 @@ def group_list(request):
 
 @login_required
 def group_detail(request, group_id):
-    group = get_object_or_404(Group, id=group_id, owner=request.user)
-    if request.method == 'POST':
-        form = GroupForm(request.POST, instance=group)
-        if form.is_valid():
-            form.save()
-            return redirect('group_list')
-    else:
-        form = GroupForm(instance=group)
-    return render(request, 'users/group_detail.html', {'group': group, 'form': form})
+    group = get_object_or_404(Group, id=group_id)
+    is_owner = group.owner == request.user
+    if not is_owner and not group.members.filter(id=request.user.id).exists():
+        return HttpResponseForbidden("You are not a member of this group.")
+
+    form = None
+    if is_owner:  # Jeśli użytkownik jest właścicielem grupy, inicjujemy formularz z instancją grupy
+        if request.method == 'POST':
+            form = GroupForm(request.POST, instance=group)
+            if form.is_valid():
+                form.save()
+                return redirect('group_list')
+        else:
+            form = GroupForm(instance=group)
+
+    return render(request, 'users/group_detail.html', {'group': group, 'is_owner': is_owner, 'form': form})
 
 
 @login_required

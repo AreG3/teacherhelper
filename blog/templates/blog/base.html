@@ -34,7 +34,7 @@
           <div class="navbar-nav">
               {% if user.is_authenticated %}
                   <a class="nav-item nav-link" href="{% url 'post-create' %}">Nowy Post</a>
-                  <a class="nav-item nav-link" href="{% url 'create_group' %}">Grupy</a>
+                  <a class="nav-item nav-link" href="{% url 'group_list' %}">Grupy</a>
                   <a class="nav-item nav-link" href="{% url 'profile' %}">Profil</a>
                   <a class="nav-item nav-link" href="{% url 'logout' %}">Wyloguj</a>
               {% else %}

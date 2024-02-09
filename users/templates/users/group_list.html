@@ -1,10 +1,28 @@
-{% if user_groups %}
-    <h2>Twoje grupy:</h2>
-    <ul>
-        {% for group in user_groups %}
-            <li><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>Nie należysz do żadnej grupy ani nie jesteś ich właścicielem.</p>
-{% endif %}
+{% extends "blog/base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8">
+                {% if user_groups %}
+                    <h2>Twoje grupy:</h2>
+                    <ul class="list-group">
+                        {% for group in user_groups %}
+                            <li class="list-group-item"><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Nie należysz do żadnej grupy ani nie jesteś ich właścicielem.</p>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Stwórz nową grupę</h5>
+                        <a href="{% url 'create_group' %}" class="btn btn-primary btn-block">Stwórz grupę</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

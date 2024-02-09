@@ -1,0 +1,23 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Czy na pewno chcesz usunąć grupę "{{ group.name }}"?</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <fieldset class="form-group">
+                                {{ form|crispy }}
+                        </fieldset>
+                        <button class="btn btn-danger" type="submit">Usuń</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content%}

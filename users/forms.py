@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .models import Group
 
 from blog.models import Post
 from .models import Profile
@@ -39,3 +40,20 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Events
         fields = ['name', 'start', 'end']
+
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name', 'description']
+        labels = {
+            'name': 'Nazwa grupy',
+            'description': 'Opis grupy'
+        }
+        widgets = {
+            'owner': forms.HiddenInput()  # Ukryj pole 'owner' przed użytkownikami
+        }
+
+
+class AddUserToGroupForm(forms.Form):
+    user = forms.ModelChoiceField(queryset=User.objects.all(), label='Użytkownik')

@@ -1,0 +1,55 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ group.name }}</h2>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="id_name">Nazwa grupy:</label>
+                                <input type="text" class="form-control" id="id_name" name="name" value="{{ group.name }}" {% if not is_owner %} readonly {% endif %}>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_description">Opis grupy:</label>
+                                <textarea class="form-control" id="id_description" name="description" {% if not is_owner %} readonly {% endif %}>{{ group.description }}</textarea>
+                            </div>
+                            <div class="form-group text-center">
+                                {% if is_owner %}
+                                    <form method="post">
+                                        <div class="form-group row">
+                                            <div class="col">
+                                                <button type="submit" class="btn btn-primary btn-block">Zapisz zmiany</button>
+                                            </div>
+                                            <div class="col">
+                                                <a href="{% url 'delete_group' group.id %}" class="btn btn-danger btn-block">Usuń grupę</a>
+                                            </div>
+                                            <div class="col">
+                                                <a href="{% url 'add_user_to_group' group.id %}" class="btn btn-success btn-block">Dodaj użytkownika</a>
+                                            </div>
+                                            <div class="col">
+                                                <a class="btn btn-secondary btn-block" href="{% url 'group_list' %}">Wstecz</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                {% else %}
+                                    <p class="card-text">To jest widok tylko do odczytu. Nie masz uprawnień do edycji tej grupy.</p>
+                                    <p class="card-text">Członkowie grupy:</p>
+                                    <ul class="list-group">
+                                        {% for member in group.members.all %}
+                                            <li class="list-group-item">{{ member.username }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <a class="btn btn-secondary btn-block" href="{% url 'group_list' %}">Wstecz</a>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -50,3 +50,10 @@ class GroupForm(forms.ModelForm):
             'name': 'Nazwa grupy',
             'description': 'Opis grupy'
         }
+        widgets = {
+            'owner': forms.HiddenInput()  # Ukryj pole 'owner' przed użytkownikami
+        }
+
+
+class AddUserToGroupForm(forms.Form):
+    user = forms.ModelChoiceField(queryset=User.objects.all(), label='Użytkownik')

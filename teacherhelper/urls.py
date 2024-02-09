@@ -38,6 +38,10 @@ urlpatterns = [
     path('kalendarz/remove/<int:id>/', views.remove, name='remove'),
     path('kalendarz/update/<int:id>/', views.update, name='update'),
     path('create_group/', create_group, name='create_group'),
+    path('groups/', user_views.group_list, name='group_list'),
+    path('groups/<int:group_id>/', user_views.group_detail, name='group_detail'),
+    path('groups/<int:group_id>/add_user/', user_views.add_user_to_group, name='add_user_to_group'),
+    path('groups/<int:group_id>/delete/', user_views.delete_group, name='delete_group'),
     path('', include('blog.urls')),
 ]
 

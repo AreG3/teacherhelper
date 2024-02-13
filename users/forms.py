@@ -56,5 +56,15 @@ class GroupForm(forms.ModelForm):
 
 
 class AddUserToGroupForm(forms.Form):
-    user = forms.ModelChoiceField(queryset=User.objects.all(), label='Użytkownik')
-    action = forms.ChoiceField(choices=(('add', 'Dodaj do grupy'), ('remove', 'Usuń z grupy')), label='Akcja')
+    user = forms.ModelChoiceField(queryset=None, label='Użytkownik')
+
+    def __init__(self, *args, **kwargs):
+        group_id = kwargs.pop('group_id')
+        action = kwargs.pop('action')
+        super(AddUserToGroupForm, self).__init__(*args, **kwargs)
+
+        if action == 'add':
+            self.fields['user'].queryset = User.objects.exclude(groups__id=group_id)
+        elif action == 'remove':
+            group = Group.objects.get(id=group_id)
+            self.fields['user'].queryset = group.members.all()

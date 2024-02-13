@@ -3,17 +3,26 @@
 {% block content %}
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="card-title">Zarządzaj użytkownikami grupy {{ group.name }}</h2>
+                        <h2 class="card-title">Dodaj użytkownika do grupy {{ group.name }}</h2>
                         <form method="post">
                             {% csrf_token %}
-                            <div class="form-group">
-                                {{ form.as_p }}
-                            </div>
-                            <button type="submit" class="btn btn-primary">Zatwierdź</button>
-                            <a class="btn btn-secondary" href="{% url 'group_detail' group_id=group.id %}">Anuluj</a>
+                            {{ add_form.as_p }}
+                            <button type="submit" class="btn btn-primary" name="add_user_form">Dodaj</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Usuń użytkownika z grupy {{ group.name }}</h2>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ remove_form.as_p }}
+                            <button type="submit" class="btn btn-danger" name="remove_user_form">Usuń</button>
                         </form>
                     </div>
                 </div>

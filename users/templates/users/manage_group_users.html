@@ -1,0 +1,23 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Zarządzaj użytkownikami grupy {{ group.name }}</h2>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ form.as_p }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Zatwierdź</button>
+                            <a class="btn btn-secondary" href="{% url 'group_detail' group_id=group.id %}">Anuluj</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

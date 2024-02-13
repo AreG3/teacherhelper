@@ -115,3 +115,23 @@ def delete_group(request, group_id):
         group.delete()
         return redirect('group_list')
     return render(request, 'users/delete_group_confirm.html', {'group': group})
+
+
+@login_required
+def manage_group_users(request, group_id):
+    group = get_object_or_404(Group, id=group_id, owner=request.user)
+    if request.method == 'POST':
+        form = AddUserToGroupForm(request.POST)
+        if form.is_valid():
+            user = form.cleaned_data['user']
+            action = form.cleaned_data['action']
+            if action == 'add':
+                group.members.add(user)
+                messages.success(request, f'Dodano użytkownika {user.username} do grupy {group.name}.')
+            elif action == 'remove':
+                group.members.remove(user)
+                messages.success(request, f'Usunięto użytkownika {user.username} z grupy {group.name}.')
+            return redirect('group_detail', group_id=group.id)
+    else:
+        form = AddUserToGroupForm()
+    return render(request, 'users/manage_group_users.html', {'form': form, 'group': group})

@@ -57,3 +57,4 @@ class GroupForm(forms.ModelForm):
 
 class AddUserToGroupForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all(), label='Użytkownik')
+    action = forms.ChoiceField(choices=(('add', 'Dodaj do grupy'), ('remove', 'Usuń z grupy')), label='Akcja')

@@ -131,7 +131,7 @@ def manage_group_users(request, group_id):
                 user = add_form.cleaned_data['user']
                 group.members.add(user)
                 messages.success(request, f'Dodano użytkownika {user.username} do grupy {group.name}.')
-                return redirect('group_detail', group_id=group.id)
+                return redirect('manage_group_users', group_id=group_id)  # Przekierowanie na stronę zarządzania użytkownikami grupy
 
         elif 'remove_user_form' in request.POST:
             remove_form = AddUserToGroupForm(request.POST, group_id=group_id, action='remove')
@@ -139,6 +139,7 @@ def manage_group_users(request, group_id):
                 user = remove_form.cleaned_data['user']
                 group.members.remove(user)
                 messages.success(request, f'Usunięto użytkownika {user.username} z grupy {group.name}.')
-                return redirect('group_detail', group_id=group.id)
+                return redirect('manage_group_users', group_id=group_id)  # Przekierowanie na stronę zarządzania użytkownikami grupy
 
     return render(request, 'users/manage_group_users.html', {'add_form': add_form, 'remove_form': remove_form, 'group': group})
+

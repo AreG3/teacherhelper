@@ -3,6 +3,11 @@
 {% block content %}
     <div class="container mt-5">
         <div class="row justify-content-center">
+            <div class="col-md-12 mb-4">
+                <a href="{% url 'group_detail' group_id=group.id %}" class="btn btn-secondary">Wstecz</a>
+            </div>
+        </div>
+        <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">

@@ -39,6 +39,7 @@
                                     <p class="card-text">To jest widok tylko do odczytu. Nie masz uprawnień do edycji tej grupy.</p>
                                     <p class="card-text">Członkowie grupy:</p>
                                     <ul class="list-group">
+                                        <li class="list-group-item font-weight-bold">{{ group.owner.username }} (założyciel)</li>
                                         {% for member in group.members.all %}
                                             <li class="list-group-item">{{ member.username }}</li>
                                         {% endfor %}

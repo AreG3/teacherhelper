@@ -63,8 +63,10 @@ class AddUserToGroupForm(forms.Form):
         action = kwargs.pop('action')
         super(AddUserToGroupForm, self).__init__(*args, **kwargs)
 
+        group = Group.objects.get(id=group_id)
+        existing_members = group.members.all()
+
         if action == 'add':
-            self.fields['user'].queryset = User.objects.exclude(groups__id=group_id)
+            self.fields['user'].queryset = User.objects.exclude(id__in=existing_members.values_list('id', flat=True))
         elif action == 'remove':
-            group = Group.objects.get(id=group_id)
-            self.fields['user'].queryset = group.members.all()
+            self.fields['user'].queryset = existing_members

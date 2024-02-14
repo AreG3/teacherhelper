@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-8">
                 {% if user_groups %}
-                    <h2>Twoje grupy:</h2>
+                    <h2>Grupy do których należysz:</h2>
                     <ul class="list-group">
                         {% for group in user_groups %}
                             <li class="list-group-item"><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
@@ -15,7 +15,7 @@
                     <p>Nie należysz do żadnej grupy ani nie jesteś ich właścicielem.</p>
                 {% endif %}
                 {% if owned_groups %}
-                    <h2>Grupy, których jesteś właścicielem:</h2>
+                    <h2>Grupy, należące do ciebie:</h2>
                     <ul class="list-group">
                         {% for group in owned_groups %}
                             <li class="list-group-item"><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>

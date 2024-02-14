@@ -64,13 +64,11 @@ def create_group(request):
 
 @login_required
 def group_list(request):
-    if request.user.is_authenticated:
-        user_groups = Group.objects.filter(owner=request.user)
-        if not user_groups.exists():
-            user_groups = Group.objects.filter(members=request.user)
-        return render(request, 'users/group_list.html', {'user_groups': user_groups})
-    else:
-        return render(request, 'users/group_list.html', {})
+    user = request.user
+    user_groups = Group.objects.filter(members=user)
+    owned_groups = Group.objects.filter(owner=user)
+    all_groups = user_groups.union(owned_groups)  # Połączenie grup, których użytkownik jest członkiem i właścicielem
+    return render(request, 'users/group_list.html', {'user_groups': user_groups, 'owned_groups': owned_groups, 'all_groups': all_groups})
 
 
 @login_required

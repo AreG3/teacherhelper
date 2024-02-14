@@ -14,6 +14,14 @@
                 {% else %}
                     <p>Nie należysz do żadnej grupy ani nie jesteś ich właścicielem.</p>
                 {% endif %}
+                {% if owned_groups %}
+                    <h2>Grupy, których jesteś właścicielem:</h2>
+                    <ul class="list-group">
+                        {% for group in owned_groups %}
+                            <li class="list-group-item"><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
             <div class="col-md-4">
                 <div class="card">

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from users.models import Group
 
 
 class Post(models.Model):
@@ -20,6 +21,9 @@ class Post(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, blank=True,
+                              verbose_name='Grupa nauczycielska')  # Dodajemy pole group
 
     def __str__(self):
         return self.title

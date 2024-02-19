@@ -11,8 +11,6 @@
                             <li class="list-group-item"><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
                         {% endfor %}
                     </ul>
-                {% else %}
-                    <p>Nie należysz do żadnej grupy ani nie jesteś ich właścicielem.</p>
                 {% endif %}
                 {% if owned_groups %}
                     <h2>Grupy, należące do ciebie:</h2>
@@ -21,6 +19,9 @@
                             <li class="list-group-item"><a href="{% url 'group_detail' group.id %}">{{ group.name }}</a></li>
                         {% endfor %}
                     </ul>
+                {% endif %}
+                {% if not user_groups and not owned_groups %}
+                    <p>Nie należysz do żadnej grupy ani nie jesteś ich właścicielem.</p>
                 {% endif %}
             </div>
             <div class="col-md-4">

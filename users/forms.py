@@ -8,6 +8,14 @@ from .models import Profile
 from kalendarz.models import Events
 
 
+class PostForm(forms.ModelForm):
+    group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False, label='Grupa nauczycielska')
+
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'uploaded_file', 'visibility', 'group']
+
+
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
 

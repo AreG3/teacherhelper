@@ -1,19 +1,45 @@
 {% extends "blog/base.html" %}
 {% block content %}
     {% for post in posts %}
-        {% if post.visibility == True or post.author.username == user.username %}
+        {% if post.visibility %}
+            <!-- Post always visible for everyone -->
             <article class="media content-section">
-              <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
-              <div class="media-body">
-                <div class="article-metadata">
-                  <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
-                  <small class="text-muted">{{ post.date_posted|date:'D, d N Y H:i' }}</small>
+                <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                        <small class="text-muted">{{ post.date_posted|date:'D, d N Y H:i' }}</small>
+                    </div>
+                    <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    <p class="article-content">{{ post.content }}</p>
                 </div>
-                <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-                <p class="article-content">{{ post.content }}</p>
-              </div>
             </article>
-        {% else %}
+        {% elif post.author == user %}
+            <!-- Post always visible for its author -->
+            <article class="media content-section">
+                <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                        <small class="text-muted">{{ post.date_posted|date:'D, d N Y H:i' }}</small>
+                    </div>
+                    <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    <p class="article-content">{{ post.content }}</p>
+                </div>
+            </article>
+        {% elif post.group and user in post.group.members.all %}
+            <!-- Post visible for members of the selected group -->
+            <article class="media content-section">
+                <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                        <small class="text-muted">{{ post.date_posted|date:'D, d N Y H:i' }}</small>
+                    </div>
+                    <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    <p class="article-content">{{ post.content }}</p>
+                </div>
+            </article>
         {% endif %}
     {% endfor %}
     {% if is_paginated %}
@@ -21,7 +47,6 @@
             <a class="btn btn-outline-info mb-4" href="?page=1">Pierwsza strona</a>
             <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Poprzednia</a>
         {% endif %}
-
         {% for num in page_obj.paginator.page_range %}
             {% if page_obj.number == num %}
                 <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
@@ -29,11 +54,9 @@
                 <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
             {% endif %}
         {% endfor %}
-
         {% if page_obj.has_next %}
             <a class="btn btn-outline-info mb-4" href="?page= {{ page_obj.next_page_number }} ">Następna</a>
             <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Ostatnia</a>
         {% endif %}
-
     {% endif %}
 {% endblock content %}

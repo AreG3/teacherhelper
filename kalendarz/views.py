@@ -11,20 +11,19 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_protect
 
 
-
-@login_required
-def create_event(request):
-    if request.method == 'POST':
-        form = EventForm(request.POST)
-        if form.is_valid():
-            event = form.save(commit=False)
-            event.user_profile = request.user
-            event.save()
-            return redirect('all_events')  # Przykładowa nazwa widoku listy zdarzeń
-    else:
-        form = EventForm()
-
-    return render(request, 'create_event.html', {'form': form})
+#@login_required
+#def create_event(request):
+#    if request.method == 'POST':
+#        form = EventForm(request.POST)
+#        if form.is_valid():
+#            event = form.save(commit=False)
+#            event.user_profile = request.user
+#            event.save()
+#            return redirect('all_events')  # Przykładowa nazwa widoku listy zdarzeń
+#    else:
+#        form = EventForm()
+#
+#    return render(request, 'create_event.html', {'form': form})
 
 
 

@@ -76,7 +76,7 @@ TEMPLATES = [
 
 TINYMCE_DEFAULT_CONFIG = {
     'height': 360,
-    'width': 920,
+    'width': '100%',  # Zmieniona szerokość na procentową
     'cleanup_on_startup': True,
     'custom_undo_redo_levels': 20,
     'selector': 'textarea',

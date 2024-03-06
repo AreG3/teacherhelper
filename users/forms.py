@@ -11,7 +11,7 @@ from tinymce.widgets import TinyMCE
 
 class PostForm(forms.ModelForm):
     group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False, label='Grupa nauczycielska')
-    content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+    content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}), label='Treść: ')
 
     class Meta:
         model = Post

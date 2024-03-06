@@ -12,7 +12,7 @@
                         <small class="text-muted">{{ post.date_posted|date:'D, d N Y H:i' }}</small>
                     </div>
                     <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-                    <p class="article-content">{{ post.content }}</p>
+                    <p class="article-content">{{ post.content|safe }}</p>
                 </div>
             </article>
         {% elif post.author == user %}
@@ -25,7 +25,7 @@
                         <small class="text-muted">{{ post.date_posted|date:'D, d N Y H:i' }}</small>
                     </div>
                     <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-                    <p class="article-content">{{ post.content }}</p>
+                    <p class="article-content">{{ post.content|safe }}</p>
                 </div>
             </article>
         {% elif post.group and user in post.group.members.all %}
@@ -38,7 +38,7 @@
                         <small class="text-muted">{{ post.date_posted|date:'D, d N Y H:i' }}</small>
                     </div>
                     <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-                    <p class="article-content">{{ post.content }}</p>
+                    <p class="article-content">{{ post.content|safe }}</p>
                 </div>
             </article>
         {% endif %}

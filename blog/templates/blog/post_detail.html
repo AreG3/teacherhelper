@@ -13,7 +13,7 @@
             {% endif %}
         </div>
             <h2 class="article-content">{{ object.title }}</h2>
-            <p class="article-content">{{ object.content }}</p>
+            <p class="article-content">{{ object.content|safe }}</p>
             <br><br>
             {% if object.uploaded_file %}
                 <small class="text-info">{{ 'Zamieszczone pliki: ' }}</small>

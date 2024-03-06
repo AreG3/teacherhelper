@@ -6,10 +6,12 @@ from .models import Group
 from blog.models import Post
 from .models import Profile
 from kalendarz.models import Events
+from tinymce.widgets import TinyMCE
 
 
 class PostForm(forms.ModelForm):
     group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False, label='Grupa nauczycielska')
+    content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
 
     class Meta:
         model = Post

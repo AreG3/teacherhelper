@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post
 from users.forms import FileForm, PostForm
+from django.db.models import Q
 
 
 def home(request):
@@ -82,7 +83,17 @@ def about(request):
 def search_engine(request):
     if request.method == "POST":
         searched = request.POST.get('searched')
-        posts = Post.objects.filter(title__contains=searched)
-        return render(request, 'blog/search_engine.html', {'searched': searched, 'posts': posts})
+        posts_title = Post.objects.filter(title__icontains=searched)
+        posts_content = Post.objects.filter(content__icontains=searched)
+        return render(request, 'blog/search_engine.html', {'searched': searched, 'posts_title': posts_title, 'posts_content': posts_content})
     else:
         return render(request, 'blog/search_engine.html', {})
+
+
+def search_content(request):
+    if request.method == "POST":
+        searched_content = request.POST.get('searched_content')
+        posts_content = Post.objects.filter(content__icontains=searched_content)
+        return render(request, 'blog/search_content.html', {'searched_content': searched_content, 'posts_content': posts_content})
+    else:
+        return render(request, 'blog/search_content.html', {})

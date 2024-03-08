@@ -1,7 +1,7 @@
 <nav class="navbar navbar-light" style="background-color: #0e52db;">
-  <form class="form-inline" method=POST action="{% url 'search_engine' %}">
+  <form class="form-inline" method="POST" action="{% url 'search_engine' %}">
       {% csrf_token %}
-    <input class="form-control mr-sm-2" type="Wyszukaj" placeholder="Wyszukaj" aria-label="Search" name="searched">
+    <input class="form-control mr-sm-2" type="text" placeholder="Wyszukaj" aria-label="Search" name="searched">
     <button class="btn btn-outline-white btn-md my-2 my-sm-0 ml-3" type="submit">Wyszukaj</button>
   </form>
 </nav>

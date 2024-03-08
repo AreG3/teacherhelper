@@ -1,0 +1,19 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+    <center>
+    {% if searched_content %}
+        <h1>Oto wyniki wyszukiwania w treści dla "{{ searched_content }}": </h1>
+        <br/>
+        {% for post in posts_content %}
+            <!-- Wyświetlamy wyniki wyszukiwania po treści -->
+            {% if post.visibility == True or post.author.username == user.username %}
+                <a href="{% url 'post-detail' post.id %}">{{ post }}</a><br/>
+            {% endif %}
+        {% endfor %}
+
+    {% else %}
+        <h1>Wyszukaj coś konkretnego w treści...</h1>
+    {% endif %}
+    </center>
+{% endblock %}

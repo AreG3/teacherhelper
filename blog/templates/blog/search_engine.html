@@ -3,19 +3,35 @@
 {% block content %}
     <center>
     {% if searched %}
-        <h1>Oto wyniki wyszukiwania ,,{{ searched }}": </h1>
+        <h1>Oto wyniki wyszukiwania dla "{{ searched }}": </h1>
         <br/>
-        {% for post in posts %}
+        <h2>Wyniki na podstawie tytułów:</h2>
+        {% for post in posts_title %}
+            <!-- Wyświetlamy wyniki wyszukiwania po tytule -->
             {% if post.visibility == True or post.author.username == user.username %}
                 <a href="{% url 'post-detail' post.id %}">{{ post }}</a><br/>
             {% endif %}
         {% endfor %}
 
+        <br/>
+        <h2>Wyniki wyszukiwania po treści:</h2>
+        {% for post in posts_content %}
+            <!-- Wyświetlamy wyniki wyszukiwania po treści -->
+            {% if post.visibility == True or post.author.username == user.username %}
+                <a href="{% url 'post-detail' post.id %}">{{ post }}</a><br/>
+            {% endif %}
+        {% endfor %}
+
+        <br/>
+        <!-- Dodajemy formularz dla wyszukiwania po treści -->
+        <form method="POST" action="{% url 'search_content' %}">
+            {% csrf_token %}
+            <input type="text" name="searched_content" placeholder="Wyszukaj w treści">
+            <button type="submit">Szukaj</button>
+        </form>
+
     {% else %}
-        <h1>Wyszukaj czegoś konkretnego...</h1>
+        <h1>Wyszukaj coś konkretnego...</h1>
     {% endif %}
-
-
-
     </center>
 {% endblock %}

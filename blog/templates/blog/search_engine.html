@@ -5,7 +5,7 @@
     {% if searched %}
         <h1>Oto wyniki wyszukiwania dla "{{ searched }}": </h1>
         <br/>
-        <h2>Wyniki na podstawie tytułów:</h2>
+        <h2>Wyniki wyszukiwania na podstawie tytułów:</h2>
         {% for post in posts_title %}
             <!-- Wyświetlamy wyniki wyszukiwania po tytule -->
             {% if post.visibility == True or post.author.username == user.username %}
@@ -17,6 +17,15 @@
         <h2>Wyniki wyszukiwania po treści:</h2>
         {% for post in posts_content %}
             <!-- Wyświetlamy wyniki wyszukiwania po treści -->
+            {% if post.visibility == True or post.author.username == user.username %}
+                <a href="{% url 'post-detail' post.id %}">{{ post }}</a><br/>
+            {% endif %}
+        {% endfor %}
+
+        <br/>
+        <h2>Wyniki wyszukiwania po autorze:</h2>
+        {% for post in posts_author %}
+            <!-- Wyświetlamy wyniki wyszukiwania po autorze -->
             {% if post.visibility == True or post.author.username == user.username %}
                 <a href="{% url 'post-detail' post.id %}">{{ post }}</a><br/>
             {% endif %}

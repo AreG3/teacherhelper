@@ -85,7 +85,8 @@ def search_engine(request):
         searched = request.POST.get('searched')
         posts_title = Post.objects.filter(title__icontains=searched)
         posts_content = Post.objects.filter(content__icontains=searched)
-        return render(request, 'blog/search_engine.html', {'searched': searched, 'posts_title': posts_title, 'posts_content': posts_content})
+        posts_author = Post.objects.filter(author__username__icontains=searched)
+        return render(request, 'blog/search_engine.html', {'searched': searched, 'posts_title': posts_title, 'posts_content': posts_content, 'posts_author': posts_author})
     else:
         return render(request, 'blog/search_engine.html', {})
 

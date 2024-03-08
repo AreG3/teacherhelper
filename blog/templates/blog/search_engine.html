@@ -32,13 +32,6 @@
         {% endfor %}
 
         <br/>
-        <!-- Dodajemy formularz dla wyszukiwania po treści -->
-        <form method="POST" action="{% url 'search_content' %}">
-            {% csrf_token %}
-            <input type="text" name="searched_content" placeholder="Wyszukaj w treści">
-            <button type="submit">Szukaj</button>
-        </form>
-
     {% else %}
         <h1>Wyszukaj coś konkretnego...</h1>
     {% endif %}

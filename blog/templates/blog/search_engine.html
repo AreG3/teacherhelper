@@ -24,11 +24,9 @@
 
         <br/>
         <h2>Wyniki wyszukiwania po autorze:</h2>
-        {% for post in posts_author %}
+        {% for author in authors %}
             <!-- Wyświetlamy wyniki wyszukiwania po autorze -->
-            {% if post.visibility == True or post.author.username == user.username %}
-                <a href="{% url 'post-detail' post.id %}">{{ post }}</a><br/>
-            {% endif %}
+            <p><a href="{% url 'user-posts' author.username %}">{{ author }}</a> - <a href="{% url 'user-posts' author.username %}">Zobacz wszystkie posty</a></p>
         {% endfor %}
 
         <br/>

@@ -1,6 +1,6 @@
 import datetime
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.utils import timezone
 from kalendarz.models import Events
 from django.contrib.auth.decorators import login_required
@@ -9,22 +9,6 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods, require_GET
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_protect
-
-
-#@login_required
-#def create_event(request):
-#    if request.method == 'POST':
-#        form = EventForm(request.POST)
-#        if form.is_valid():
-#            event = form.save(commit=False)
-#            event.user_profile = request.user
-#            event.save()
-#            return redirect('all_events')  # Przykładowa nazwa widoku listy zdarzeń
-#    else:
-#        form = EventForm()
-#
-#    return render(request, 'create_event.html', {'form': form})
-
 
 
 @login_required

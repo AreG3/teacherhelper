@@ -39,8 +39,6 @@ def all_events(request):
     return JsonResponse(out, safe=False)
 
 
-
-
 @csrf_protect
 @require_http_methods(["POST", "GET"])
 @login_required
@@ -76,8 +74,6 @@ def add_event(request):
         return JsonResponse(data)
 
 
-
-
 @csrf_protect
 @require_http_methods(["POST", "GET"])
 @login_required
@@ -94,8 +90,6 @@ def remove(request, id):
     else:
         data = {'error': 'Invalid request method'}
         return JsonResponse(data, status=400)
-
-
 
 
 @csrf_protect

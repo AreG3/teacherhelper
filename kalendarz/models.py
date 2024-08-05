@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import User
+from users.models import User, Group
 
 
 class Events(models.Model):
@@ -9,6 +9,7 @@ class Events(models.Model):
     start = models.DateTimeField(null=True, blank=True)
     end = models.DateTimeField(null=True, blank=True)
     all_day = models.BooleanField(default=False)
+    groups = models.ManyToManyField(Group, related_name='events', blank=True)
 
     class Meta:
         db_table = "tblevents"

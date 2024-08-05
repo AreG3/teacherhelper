@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.db import models
 from .models import Group
 
 from blog.models import Post
@@ -49,7 +50,13 @@ class FileForm(forms.ModelForm):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Events
-        fields = ['name', 'start', 'end']
+        fields = ['name', 'start', 'end', 'groups']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(EventForm, self).__init__(*args, **kwargs)
+        if user:
+            self.fields['groups'].queryset = Group.objects.filter(models.Q(members=user) | models.Q(owner=user)).distinct()
 
 
 class GroupForm(forms.ModelForm):

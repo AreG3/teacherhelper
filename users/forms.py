@@ -56,7 +56,7 @@ class EventForm(forms.ModelForm):
     end = forms.DateTimeField(
         widget=forms.widgets.DateTimeInput(attrs={'type': 'datetime-local'}),
         required=False,
-        label='Koniec'
+        label='Koniec*'
     )
     all_day = forms.BooleanField(
         required=False,
@@ -66,14 +66,14 @@ class EventForm(forms.ModelForm):
         queryset=Group.objects.none(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
-        label='Udostępnij grupom'
+        label='Udostępnij grupom:'
     )
 
     class Meta:
         model = Events
         fields = ['name', 'start', 'end', 'all_day', 'groups']
         labels = {
-            'name': 'Tytuł wydarzenia',
+            'name': 'Tytuł wydarzenia*',
         }
 
     def __init__(self, *args, **kwargs):

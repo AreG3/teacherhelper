@@ -6,19 +6,85 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-10">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="card-title">Edytuj Wydarzenie</h2>
+                    <h2 class="card-title text-center mb-4">Edytuj Wydarzenie</h2>
                     <form method="POST">
                         {% csrf_token %}
-                        {{ form|crispy }}
-                        <button type="submit" class="btn btn-primary">Zapisz Zmiany</button>
-                        <a href="{% url 'index' %}" class="btn btn-secondary">Anuluj</a>
+                        <div class="mb-3">
+                            {{ form.name|as_crispy_field }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.start|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.end|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.all_day|as_crispy_field }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.groups|as_crispy_field }}
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <a href="{% url 'index' %}" class="btn btn-secondary me-3">Anuluj</a>
+                            <button type="submit" class="btn btn-primary">Zapisz Zmiany</button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        function adjustForTimezone(date) {
+            let timezoneOffset = date.getTimezoneOffset() * 60000; // Convert offset to milliseconds
+            return new Date(date.getTime() - timezoneOffset); // Adjust time by the offset
+        }
+
+        // Adjust the start and end times just before form submission
+        $('form').submit(function(event) {
+            let startDate = new Date($('#id_start').val());
+            let endDate = new Date($('#id_end').val());
+
+            // Adjust for timezone
+            startDate = adjustForTimezone(startDate);
+            endDate = adjustForTimezone(endDate);
+
+            // Format the dates back to the correct string format for submission
+            $('#id_start').val(startDate.toISOString().slice(0, 16));
+            $('#id_end').val(endDate.toISOString().slice(0, 16));
+        });
+
+        $('#id_all_day').change(function() {
+            if ($(this).is(':checked')) {
+                let startDate = new Date($('#id_start').val());
+                let endDate = new Date($('#id_end').val());
+
+                // Set to the full day and adjust for timezone
+                startDate.setHours(0, 0, 0, 0);
+                endDate = new Date(startDate);
+                endDate.setHours(23, 59, 59, 999);
+
+                // Adjust for timezone
+                startDate = adjustForTimezone(startDate);
+                endDate = adjustForTimezone(endDate);
+
+                // Format the dates for the input fields
+                $('#id_start').val(startDate.toISOString().slice(0, 16));
+                $('#id_end').val(endDate.toISOString().slice(0, 16));
+            }
+        });
+
+        // Enhancing group selection
+        $('.select2').select2({
+            placeholder: "Wybierz grupy",
+            width: '100%'
+        });
+    });
+</script>
 {% endblock content %}

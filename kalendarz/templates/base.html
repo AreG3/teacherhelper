@@ -90,6 +90,8 @@
             week: 'Tydzień',
             day: 'Dzień'
         },
+        timeFormat: 'H:mm', // 24-hour format
+        slotLabelFormat: ['H:mm'], // 24-hour format for time slots
         eventClick: function(event, jsEvent, view) {
             // Check if the user is the owner of the event or the group owner
             $.ajax({

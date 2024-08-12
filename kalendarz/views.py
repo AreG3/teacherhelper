@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import redirect
 from django.contrib import messages
+from datetime import timedelta
 
 
 @login_required
@@ -73,13 +74,15 @@ def add_event(request):
         form = EventForm(request.POST, user=request.user)
         if form.is_valid():
             event = form.save(commit=False)
+
+            # Adjusting the start and end times by adding 2 hours to compensate for timezone issues
+            event.start = event.start + timedelta(hours=2)
+            event.end = event.end + timedelta(hours=2)
+
             event.user_profile = request.user
             event.save()
-            form.save_m2m()  # Save the many-to-many relationships for groups
-            messages.success(request, 'Wydarzenie zostało pomyślnie dodane.')
+            form.save_m2m()  # Save the many-to-many data for the form
             return redirect('index')
-        else:
-            messages.error(request, 'Błąd w formularzu.')
     else:
         form = EventForm(user=request.user)
 

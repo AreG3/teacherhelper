@@ -31,18 +31,21 @@ def index(request):
 
 @login_required
 def all_events(request):
-    # Get personal events for the logged-in user
+    # Fetch personal events created by the user
     personal_events = Events.objects.filter(user_profile=request.user)
 
-    # Get group events for groups the user is a member of
-    group_events = Events.objects.filter(groups__members=request.user).distinct()
+    # Fetch events for groups the user is a member of
+    group_events_as_member = Events.objects.filter(groups__members=request.user)
 
-    # Combine personal and group events
-    all_user_events = personal_events.union(group_events)
+    # Fetch events for groups the user owns
+    group_events_as_owner = Events.objects.filter(groups__owner=request.user)
+
+    # Combine all events and remove duplicates using a set
+    all_user_events = personal_events | group_events_as_member | group_events_as_owner
 
     # Prepare the event data for FullCalendar
     out = []
-    for event in all_user_events:
+    for event in all_user_events.distinct():
         out.append({
             'title': event.name,
             'id': event.id,
@@ -62,11 +65,14 @@ def add_event(request):
             event = form.save(commit=False)
             event.user_profile = request.user
             event.save()
-            form.save_m2m()  # Save the ManyToMany field (groups)
-            messages.success(request, 'The event has been created successfully.')
-            return redirect('index')  # Redirect to the calendar view
+            form.save_m2m()  # Save the many-to-many relationships for groups
+            messages.success(request, 'Wydarzenie zostało pomyślnie dodane.')
+            return redirect('index')
+        else:
+            messages.error(request, 'Błąd w formularzu.')
     else:
         form = EventForm(user=request.user)
+
     return render(request, 'add_event.html', {'form': form})
 
 

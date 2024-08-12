@@ -70,6 +70,21 @@ def add_event(request):
     return render(request, 'add_event.html', {'form': form})
 
 
+@login_required
+def edit_event(request, event_id):
+    event = get_object_or_404(Events, id=event_id, user_profile=request.user)
+
+    if request.method == 'POST':
+        form = EventForm(request.POST, instance=event, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Wydarzenie zostało zaktualizowane.')
+            return redirect('index')
+    else:
+        form = EventForm(instance=event, user=request.user)
+
+    return render(request, 'edit_event.html', {'form': form})
+
 
 @csrf_protect
 @require_http_methods(["POST", "GET"])

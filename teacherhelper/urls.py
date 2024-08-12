@@ -35,6 +35,7 @@ urlpatterns = [
     path('kalendarz/', views.index, name='index'),
     path('kalendarz/all_events/', views.all_events, name='all_events'),
     path('kalendarz/add_event/', views.add_event, name='add_event'),
+    path('kalendarz/edit_event/<int:event_id>/', views.edit_event, name='edit_event'),
     path('kalendarz/remove/<int:id>/', views.remove, name='remove'),
     path('kalendarz/update/<int:id>/', views.update, name='update'),
     path('create_group/', create_group, name='create_group'),

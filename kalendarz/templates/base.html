@@ -43,12 +43,6 @@
 </div>
 <script>
    $(document).ready(function () {
-    $('#id_groups').select2({
-        placeholder: "Wybierz grupy",
-        allowClear: true,
-        width: '100%'
-    });
-
     var calendar = $('#calendar').fullCalendar({
         header: {
             left: 'prev,next today',
@@ -56,98 +50,9 @@
             right: 'month,agendaWeek,agendaDay'
         },
         events: '{% url "all_events" %}',
-        selectable: true,
-        selectHelper: true,
-        editable: true,
+        selectable: false, // Disable selection of time slots
+        editable: false,   // Disable dragging and resizing of events
         eventLimit: true,
-        select: function (start, end, allDay) {
-            var title = prompt("Wpisz tytuł wydarzenia");
-            if (title) {
-                var allDay = confirm("Czy to wydarzenie całodniowe?");
-                var shareWithGroups = confirm("Czy chcesz podzielić się tym wydarzeniem z grupami?");
-                var groupIds = "";
-                if (shareWithGroups) {
-                    groupIds = prompt("Wpisz identyfikatory grup, z którymi chcesz się podzielić, oddzielone przecinkami.");
-                }
-                var start = allDay ? moment.utc(start).startOf('day').toISOString() : moment.utc(start).toISOString();
-                var end = allDay ? moment.utc(end).startOf('day').subtract(1, 'minute').toISOString() : moment.utc(end).toISOString();
-                $.ajax({
-                    type: "GET",
-                    url: '{% url "add_event" %}',
-                    data: {
-                        'title': title,
-                        'start': start,
-                        'end': end,
-                        'all_day': allDay,
-                        'group_ids': groupIds // Dodajemy identyfikatory grup do danych wysyłanych do backendu
-                    },
-                    dataType: "json",
-                    success: function (data) {
-                        alert("Wydarzenie zostało pomyślnie dodane");
-                        location.reload();
-                    },
-                    error: function (data) {
-                        alert('Wystąpił błąd!');
-                    }
-                });
-            }
-        },
-        eventResize: function (event) {
-            var start = moment(event.start).toISOString();
-            var end = moment(event.end).toISOString();
-            var title = event.title;
-            var id = event.id;
-            $.ajax({
-                type: "GET",
-                url: '{% url "update" id=0 %}'.replace('0', event.id),
-                data: {'title': title, 'start': start, 'end': end, 'id': id},
-                dataType: "json",
-                success: function (data) {
-                    calendar.fullCalendar('refetchEvents');
-                    alert('Wydarzenie zaktualizowane');
-                },
-                error: function (data) {
-                    alert('Wystąpił błąd!');
-                }
-            });
-        },
-        eventDrop: function (event) {
-            var start = moment(event.start).toISOString();
-            var end = moment(event.end).toISOString();
-            var title = event.title;
-            var id = event.id;
-            $.ajax({
-                type: "GET",
-                url: '{% url "update" id=0 %}'.replace('0', event.id),
-                data: {'title': title, 'start': start, 'end': end, 'id': id},
-                dataType: "json",
-                success: function (data) {
-                    calendar.fullCalendar('refetchEvents');
-                    alert('Wydarzenie zostało zaktualizowane');
-                },
-                error: function (data) {
-                    alert('Wystąpił błąd!');
-                }
-            });
-        },
-        eventClick: function (event) {
-            if (confirm("Czy na pewno chcesz to usunąć?")) {
-                var id = event.id;
-                $.ajax({
-                    type: "GET",
-                    url: '{% url "remove" id=0 %}'.replace('0', event.id),
-                    data: {'event_id': id},
-                    dataType: "json",
-                    success: function (data) {
-                        calendar.fullCalendar('refetchEvents');
-                        alert('Usunięto zdarzenie');
-                    },
-                    error: function (data) {
-                        alert('Wystąpił błąd!');
-                    }
-                });
-            }
-        },
         locale: 'pl',
         buttonText: {
             today: 'Dziś',

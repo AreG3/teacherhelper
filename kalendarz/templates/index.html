@@ -4,6 +4,9 @@
 
 {% block content %}
 <div class="col-md-12">
+    <div class="text-center mb-3">
+        <a href="{% url 'add_event' %}" class="btn btn-primary">Dodaj nowe wydarzenie</a>
+    </div>
     <div id='calendar' data-update-url="{% url 'update' id=0 %}"></div>
 </div>
 {% endblock content %}

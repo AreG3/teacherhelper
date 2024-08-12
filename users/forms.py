@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.db import models
 from .models import Group
+from django.forms import ModelForm, DateTimeInput
 
 from blog.models import Post
 from .models import Profile
@@ -48,15 +49,38 @@ class FileForm(forms.ModelForm):
 
 
 class EventForm(forms.ModelForm):
+    start = forms.DateTimeField(
+        widget=forms.widgets.DateTimeInput(attrs={'type': 'datetime-local'}),
+        label='Początek'
+    )
+    end = forms.DateTimeField(
+        widget=forms.widgets.DateTimeInput(attrs={'type': 'datetime-local'}),
+        required=False,
+        label='Koniec'
+    )
+    all_day = forms.BooleanField(
+        required=False,
+        label='Całodniowe'
+    )
+    groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.none(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label='Udostępnij grupom'
+    )
+
     class Meta:
         model = Events
-        fields = ['name', 'start', 'end', 'groups']
+        fields = ['name', 'start', 'end', 'all_day', 'groups']
+        labels = {
+            'name': 'Tytuł wydarzenia',
+        }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(EventForm, self).__init__(*args, **kwargs)
         if user:
-            self.fields['groups'].queryset = Group.objects.filter(models.Q(members=user) | models.Q(owner=user)).distinct()
+            self.fields['groups'].queryset = Group.objects.filter(members=user) | Group.objects.filter(owner=user)
 
 
 class GroupForm(forms.ModelForm):

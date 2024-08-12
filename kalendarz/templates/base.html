@@ -13,6 +13,16 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <style>
+        /* Change cursor to pointer when hovering over events */
+        .fc-event {
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        /* Optional: Add a hover effect for better visual feedback */
+        .fc-event:hover {
+            background-color: #007bff; /* Change background color on hover */
+            color: white; /* Ensure text is readable on hover */
+        }
         .container {
             text-align: center; /* Centrowanie tekstu */
         }

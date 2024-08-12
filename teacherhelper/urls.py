@@ -38,6 +38,7 @@ urlpatterns = [
     path('kalendarz/edit_event/<int:event_id>/', views.edit_event, name='edit_event'),
     path('kalendarz/remove/<int:id>/', views.remove, name='remove'),
     path('kalendarz/update/<int:id>/', views.update, name='update'),
+    path('kalendarz/check_permissions/<int:event_id>/', views.check_permissions, name='check_permissions'),
     path('create_group/', create_group, name='create_group'),
     path('groups/', user_views.group_list, name='group_list'),
     path('groups/<int:group_id>/', user_views.group_detail, name='group_detail'),

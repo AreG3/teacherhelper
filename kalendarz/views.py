@@ -21,6 +21,16 @@ def event_list(request):
     return render(request, 'event_list.html', {'user_events': user_events})
 
 
+@login_required
+def check_permissions(request, event_id):
+    event = get_object_or_404(Events, id=event_id)
+
+    # The user can edit if they are the owner of the event or the owner of the group
+    can_edit = event.user_profile == request.user or event.groups.filter(owner=request.user).exists()
+
+    return JsonResponse({'can_edit': can_edit})
+
+
 def index(request):
     user_events = Events.objects.filter(user_profile=request.user)
     context = {

@@ -81,10 +81,25 @@
             day: 'Dzień'
         },
         eventClick: function(event, jsEvent, view) {
-            $('#editEventButton').data('eventId', event.id);
-            $('#deleteEventButton').data('eventId', event.id);
-
-            $('#eventModal').modal('show');
+            // Check if the user is the owner of the event or the group owner
+            $.ajax({
+                url: '{% url "check_permissions" 0 %}'.replace('0', event.id),
+                type: 'GET',
+                success: function (response) {
+                    if (response.can_edit) {
+                        $('#editEventButton').data('eventId', event.id).show();
+                        $('#deleteEventButton').data('eventId', event.id).show();
+                        $('#eventModal').modal('show');  // Show the modal only if the user can edit
+                    } else {
+                        $('#editEventButton').hide();
+                        $('#deleteEventButton').hide();
+                        alert('Nie możesz edytować ani usunąć wydarzenia utworzonego przez kogoś innego!');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('Wystąpił błąd podczas sprawdzania uprawnień.');
+                }
+            });
         }
     });
 

@@ -26,8 +26,8 @@ def event_list(request):
 def check_permissions(request, event_id):
     event = get_object_or_404(Events, id=event_id)
 
-    # The user can edit if they are the owner of the event or the owner of the group
-    can_edit = event.user_profile == request.user or event.groups.filter(owner=request.user).exists()
+    # Only the event owner can edit or delete the event
+    can_edit = event.user_profile == request.user
 
     return JsonResponse({'can_edit': can_edit})
 

@@ -64,7 +64,7 @@ class EventForm(forms.ModelForm):
     )
     groups = forms.ModelMultipleChoiceField(
         queryset=Group.objects.none(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         required=False,
         label='Udostępnij grupom:'
     )

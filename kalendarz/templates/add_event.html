@@ -27,7 +27,17 @@
                             {{ form.all_day|as_crispy_field }}
                         </div>
                         <div class="mb-3">
-                            {{ form.groups|as_crispy_field }}
+                            <label for="groups">Udostępnij grupom:</label>
+                            <div class="form-group group-checkboxes">
+                                {% for group in form.groups %}
+                                    <div class="group-checkbox">
+                                        <label class="form-check-label">
+                                            {{ group.tag }}
+                                            <span class="group-label">{{ group.choice_label }}</span>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                         <div class="d-flex justify-content-center">
                             <a href="{% url 'index' %}" class="btn btn-secondary me-3">Wróć</a>
@@ -78,12 +88,6 @@
                 $('#id_start').val(startDate.toISOString().slice(0, 16));
                 $('#id_end').val(endDate.toISOString().slice(0, 16));
             }
-        });
-
-        // Enhancing group selection
-        $('.select2').select2({
-            placeholder: "Wybierz grupy",
-            width: '100%'
         });
     });
 </script>

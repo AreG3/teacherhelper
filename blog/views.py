@@ -6,6 +6,8 @@ from .models import Post, PostVersion
 from users.forms import FileForm, PostForm
 from difflib import HtmlDiff
 from django.db.models import Q
+from django.views import View
+from difflib import Differ
 
 
 def home(request):
@@ -92,8 +94,45 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def highlight_changes(old_content, new_content):
-    differ = HtmlDiff()
-    return differ.make_table(old_content.splitlines(), new_content.splitlines())
+    differ = Differ()
+    diff = list(differ.compare(old_content.splitlines(), new_content.splitlines()))
+
+    html_diff = []
+    for line in diff:
+        if line.startswith('+ '):
+            html_diff.append(f"<ins style='background:#e6ffe6;'>{line[2:]}</ins><br>")
+        elif line.startswith('- '):
+            html_diff.append(f"<del style='background:#ffe6e6;'>{line[2:]}</del><br>")
+        elif line.startswith('? '):
+            continue  # Ignore lines with markers
+        else:
+            html_diff.append(f"{line[2:]}<br>")
+
+    return ''.join(html_diff)
+
+
+class PostVersionComparisonView(LoginRequiredMixin, View):
+    template_name = 'blog/version_comparison.html'
+
+    def get(self, request, post_pk, version_pk):
+        post = get_object_or_404(Post, pk=post_pk)
+        version = get_object_or_404(PostVersion, pk=version_pk)
+
+        # Find the previous version
+        previous_version = PostVersion.objects.filter(post=post, version_number__lt=version.version_number).order_by('-version_number').first()
+
+        if previous_version:
+            highlighted_changes = highlight_changes(previous_version.content, version.content)
+        else:
+            highlighted_changes = "<p>Brak wcześniejszej wersji do porównania.</p>"
+
+        context = {
+            'post': post,
+            'version': version,
+            'previous_version': previous_version,
+            'highlighted_changes': highlighted_changes
+        }
+        return render(request, self.template_name, context)
 
 
 class PostVersionListView(LoginRequiredMixin, ListView):

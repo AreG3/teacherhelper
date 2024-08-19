@@ -8,13 +8,7 @@
                 <li>
                     <h4>Wersja {{ version.version_number }} ({{ version.created_at }})</h4>
                     <p><strong>Autor:</strong> {{ version.author }}</p>
-                    <div>
-                        {% if version.highlighted_changes %}
-                            {{ version.highlighted_changes|safe }}
-                        {% else %}
-                            <p>Brak wcześniejszej wersji do porównania.</p>
-                        {% endif %}
-                    </div>
+                    <a href="{% url 'version-comparison' post.pk version.pk %}" class="btn btn-primary">Zobacz Porównanie</a>
                     <hr>
                 </li>
             {% endfor %}

@@ -1,0 +1,55 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <div class="content-section">
+        <h2>Porównanie Wersji dla: {{ post.title }}</h2>
+
+        <div class="diff-container">
+            <table class="diff-table">
+                <tr>
+                    <td colspan="2">
+                        <h5>Zmiany:</h5>
+                        <div class="highlighted-changes">
+                            {{ highlighted_changes|safe }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock content %}
+<style>
+    .comparison-container {
+        display: flex;
+        justify-content: space-between;
+    }
+    .comparison-section {
+        width: 48%;
+    }
+    .diff-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    }
+
+    .diff-table {
+        width: 100%;
+    }
+
+    .previous-version, .current-version {
+        width: 45%;
+    }
+
+    .version-content {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .highlighted-changes {
+        margin-top: 20px;
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ccc;
+        overflow-x: auto;
+    }
+</style>

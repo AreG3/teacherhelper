@@ -23,11 +23,18 @@
                                 {{ form.end|as_crispy_field }}
                             </div>
                         </div>
-                        <div class="mb-3 form-check">
-                            {{ form.all_day|as_crispy_field }}
-                        </div>
                         <div class="mb-3">
-                            {{ form.groups|as_crispy_field }}
+                            <label for="groups">Udostępnij grupom:</label>
+                            <div class="form-group group-checkboxes">
+                                {% for group in form.groups %}
+                                    <div class="group-checkbox">
+                                        <label class="form-check-label">
+                                            {{ group.tag }}
+                                            <span class="group-label">{{ group.choice_label }}</span>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                         <div class="d-flex justify-content-center">
                             <a href="{% url 'index' %}" class="btn btn-secondary me-3">Anuluj</a>
@@ -58,32 +65,6 @@
             // Format the dates back to the correct string format for submission
             $('#id_start').val(startDate.toISOString().slice(0, 16));
             $('#id_end').val(endDate.toISOString().slice(0, 16));
-        });
-
-        $('#id_all_day').change(function() {
-            if ($(this).is(':checked')) {
-                let startDate = new Date($('#id_start').val());
-                let endDate = new Date($('#id_end').val());
-
-                // Set to the full day and adjust for timezone
-                startDate.setHours(0, 0, 0, 0);
-                endDate = new Date(startDate);
-                endDate.setHours(23, 59, 59, 999);
-
-                // Adjust for timezone
-                startDate = adjustForTimezone(startDate);
-                endDate = adjustForTimezone(endDate);
-
-                // Format the dates for the input fields
-                $('#id_start').val(startDate.toISOString().slice(0, 16));
-                $('#id_end').val(endDate.toISOString().slice(0, 16));
-            }
-        });
-
-        // Enhancing group selection
-        $('.select2').select2({
-            placeholder: "Wybierz grupy",
-            width: '100%'
         });
     });
 </script>

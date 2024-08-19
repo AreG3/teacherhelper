@@ -1,0 +1,27 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <h2>Historia Wersji dla: {{ post.title }}</h2>
+
+    {% if versions %}
+        <ul>
+            {% for version in versions %}
+                <li>
+                    <h4>Wersja {{ version.version_number }} ({{ version.created_at }})</h4>
+                    <p><strong>Autor:</strong> {{ version.author }}</p>
+                    <div>
+                        {% if version.highlighted_changes %}
+                            {{ version.highlighted_changes|safe }}
+                        {% else %}
+                            <p>Brak wcześniejszej wersji do porównania.</p>
+                        {% endif %}
+                    </div>
+                    <hr>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Ten post nie ma jeszcze żadnych wersji.</p>
+    {% endif %}
+
+    <a href="{% url 'post-detail' post.pk %}" class="btn btn-secondary">Powrót do Postu</a>
+{% endblock content %}

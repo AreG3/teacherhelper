@@ -2,8 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+from .models import Post, PostVersion
 from users.forms import FileForm, PostForm
+from difflib import HtmlDiff
 from django.db.models import Q
 
 
@@ -55,14 +56,28 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'blog/post_form.html'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        post = form.save(commit=False)
+
+        # Get the latest version number
+        latest_version = post.versions.first()
+        version_number = latest_version.version_number + 1 if latest_version else 1
+
+        # Save the new version
+        PostVersion.objects.create(
+            post=post,
+            version_number=version_number,
+            title=post.title,
+            content=post.content,
+            uploaded_file=post.uploaded_file,
+            author=self.request.user
+        )
+
+        post.save()
         return super().form_valid(form)
 
     def test_func(self):
         post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
+        return self.request.user == post.author or self.request.user in post.co_creation_group.members.all()
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -74,6 +89,35 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
+
+
+def highlight_changes(old_content, new_content):
+    differ = HtmlDiff()
+    return differ.make_table(old_content.splitlines(), new_content.splitlines())
+
+
+class PostVersionListView(LoginRequiredMixin, ListView):
+    model = PostVersion
+    template_name = 'blog/post_versions.html'
+    context_object_name = 'versions'
+
+    def get_queryset(self):
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        versions = post.versions.all()
+
+        if versions.exists():
+            # Add highlighted differences to each version
+            for i in range(len(versions)):
+                if i < len(versions) - 1:
+                    versions[i].highlighted_changes = highlight_changes(versions[i + 1].content, versions[i].content)
+                else:
+                    versions[i].highlighted_changes = None  # No comparison for the first version
+        return versions
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post'] = get_object_or_404(Post, pk=self.kwargs['pk'])
+        return context
 
 
 def about(request):

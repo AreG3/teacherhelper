@@ -12,6 +12,7 @@
                 </div>
             {% endif %}
         </div>
+            <a href="{% url 'post-versions' post.pk %}">Zobacz historię wersji</a>
             <h2 class="article-content">{{ object.title }}</h2>
             <p class="article-content">{{ object.content|safe }}</p>
             <br><br>

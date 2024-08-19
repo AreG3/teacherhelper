@@ -7,7 +7,7 @@ from users.models import Group
 
 class Post(models.Model):
     title = models.CharField(max_length=100, verbose_name='Temat zajęć: ')
-    content = models.TextField(verbose_name='Materiały (linki, ciekawostki itp.): ', )
+    content = models.TextField(verbose_name='Materiały (linki, ciekawostki itp.): ')
     uploaded_file = models.FileField(null=True, blank=True, upload_to='uploaded_files/',
                                      verbose_name='Dodaj jeden plik o dowolnym formacie lub paczkę w formacie .zip/.rar/.7z/.tar : ')
     visibility = models.BooleanField(verbose_name='Gdy zaznaczone - post będzie publiczny', default=True)
@@ -32,3 +32,19 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
+
+
+class PostVersion(models.Model):
+    post = models.ForeignKey(Post, related_name='versions', on_delete=models.CASCADE)
+    version_number = models.IntegerField()
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    uploaded_file = models.FileField(null=True, blank=True, upload_to='uploaded_files/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"Version {self.version_number} of {self.post.title}"
+
+    class Meta:
+        ordering = ['-version_number']

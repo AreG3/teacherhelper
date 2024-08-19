@@ -12,12 +12,23 @@ from tinymce.widgets import TinyMCE
 
 
 class PostForm(forms.ModelForm):
-    group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False, label='Grupa nauczycielska')
     content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}), label='Treść: ')
+
+    co_creation_enabled = forms.BooleanField(required=False, label="Włącz współtworzenie")
+    co_creation_mode = forms.ChoiceField(
+        choices=[('open', 'Otwarta'), ('closed', 'Zamknięta')],
+        label='Tryb współtworzenia',
+        required=False
+    )
+    co_creation_group = forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        label='Grupa współtworząca'
+    )
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'uploaded_file', 'visibility', 'group']
+        fields = ['title', 'content', 'uploaded_file', 'visibility', 'group', 'co_creation_enabled', 'co_creation_mode', 'co_creation_group']
 
 
 class UserRegisterForm(UserCreationForm):

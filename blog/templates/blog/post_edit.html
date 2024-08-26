@@ -1,0 +1,14 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content-section">
+    <h2>Edytuj Post</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.media }}  <!-- This line ensures the TinyMCE assets are loaded -->
+        {{ form|crispy }}
+        <button class="btn btn-primary" type="submit">Zapisz zmiany</button>
+        <a href="{% url 'post-detail' post.pk %}" class="btn btn-secondary">Anuluj</a>
+    </form>
+</div>
+{% endblock content %}

@@ -7,6 +7,7 @@ from django.forms import ModelForm, DateTimeInput
 
 from blog.models import Post
 from .models import Profile
+from blog.models import PostEditProposal
 from kalendarz.models import Events
 from tinymce.widgets import TinyMCE
 
@@ -28,7 +29,15 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'uploaded_file', 'visibility', 'group', 'co_creation_enabled', 'co_creation_mode', 'co_creation_group']
+        fields = ['title', 'content', 'co_creation_enabled', 'co_creation_mode', 'co_creation_group', 'visibility', 'group']
+
+
+class PostEditProposalForm(forms.ModelForm):
+    content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}), label='Treść: ')
+
+    class Meta:
+        model = PostEditProposal
+        fields = ['title', 'content']
 
 
 class UserRegisterForm(UserCreationForm):
@@ -122,3 +131,5 @@ class AddUserToGroupForm(forms.Form):
             self.fields['user'].queryset = User.objects.exclude(id__in=existing_members.values_list('id', flat=True))
         elif action == 'remove':
             self.fields['user'].queryset = existing_members
+
+

@@ -1,32 +1,44 @@
 {% extends "blog/base.html" %}
+{% load blog_extras %}
+
 {% block content %}
-    <article class="media content-section">
-        <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
-                <small class="text-muted">{{ object.date_posted|date:'D, d N Y H:i' }}</small>
-                {% if object.author == user %}
-                    <div>
-                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Edytuj</a>
-                        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Usuń</a>
-                    </div>
-                {% endif %}
-            </div>
-
-            <!-- Only show the version history link if the user is the author or is in the co-creation group -->
-            {% if object.author == user or user in object.co_creation_group.members.all %}
-                <a href="{% url 'post-versions' object.pk %}">Zobacz historię wersji</a>
-            {% endif %}
-
-            <h2 class="article-content">{{ object.title }}</h2>
-            <p class="article-content">{{ object.content|safe }}</p>
-            <br><br>
-            {% if object.uploaded_file %}
-                <small class="text-info">{{ 'Zamieszczone pliki: ' }}</small>
-                <br>
-                <a href="{{ object.uploaded_file.url }}">Kliknij aby pobrać</a>
+<article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+            <small class="text-muted">{{ object.date_posted|date:'D, d N Y H:i' }}</small>
+            {% if object.author == user %}
+                <div>
+                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Edytuj</a>
+                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Usuń</a>
+                    {% if object.co_creation_enabled and object.co_creation_mode == 'closed' %}
+                        <a class="btn btn-info btn-sm mt-1 mb-1" href="{% url 'review-proposals' object.id %}">Przejrzyj propozycje zmian</a>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
-    </article>
+
+        {% if object.co_creation_enabled %}
+            {% if object.co_creation_mode == 'open' %}
+                {% if user == object.author or user == object.co_creation_group.owner or user|user_in_collaboration_group:object %}
+                    <a href="{% url 'edit-post' object.pk %}" class="btn btn-primary mt-2">Edytuj post</a>
+                {% endif %}
+            {% elif object.co_creation_mode == 'closed' %}
+                {% if user == object.author or user == object.co_creation_group.owner or user|user_in_collaboration_group:object %}
+                    <a href="{% url 'propose-edit' object.pk %}" class="btn btn-primary mt-2">Zaproponuj zmiany</a>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        <h2 class="article-content">{{ object.title }}</h2>
+        <p class="article-content">{{ object.content|safe }}</p>
+        <br><br>
+        {% if object.uploaded_file %}
+            <small class="text-info">{{ 'Zamieszczone pliki: ' }}</small>
+            <br>
+            <a href="{{ object.uploaded_file.url }}">Kliknij aby pobrać</a>
+        {% endif %}
+    </div>
+</article>
 {% endblock content %}

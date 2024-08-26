@@ -1,0 +1,20 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<div class="content-section">
+    <h2>Propozycje zmian dla: {{ post.title }}</h2>
+    {% if proposals %}
+        <ul class="list-group">
+            {% for proposal in proposals %}
+                <li class="list-group-item">
+                    <strong>Propozycja od:</strong> {{ proposal.proposer.username }} <br>
+                    <strong>Data:</strong> {{ proposal.date_proposed|date:"D, d N Y H:i" }} <br>
+                    <a href="{% url 'approve-proposal' post.pk proposal.pk %}" class="btn btn-info mt-2">Przejrzyj propozycję</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Brak oczekujących propozycji zmian.</p>
+    {% endif %}
+    <a href="{% url 'post-detail' post.pk %}" class="btn btn-secondary mt-3">Powrót do posta</a>
+</div>
+{% endblock content %}

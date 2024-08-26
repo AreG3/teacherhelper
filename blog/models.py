@@ -33,7 +33,6 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
 
-
 class PostVersion(models.Model):
     post = models.ForeignKey(Post, related_name='versions', on_delete=models.CASCADE)
     version_number = models.IntegerField()
@@ -48,3 +47,17 @@ class PostVersion(models.Model):
 
     class Meta:
         ordering = ['-version_number']
+
+
+class PostEditProposal(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='edit_proposals')
+    proposer = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    date_proposed = models.DateTimeField(default=timezone.now)
+    is_approved = models.BooleanField(null=True, default=None)
+    date_reviewed = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Proposal for {self.post.title} by {self.proposer.username}"
+

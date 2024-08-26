@@ -9,12 +9,145 @@ from django.db.models import Q
 from django.views import View
 from difflib import Differ
 
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from .models import PostEditProposal
+from users.forms import PostForm, PostEditProposalForm
+from django.utils import timezone
+from django.core.exceptions import PermissionDenied
+
+
+def user_in_collaboration_group(user, post):
+    if post.co_creation_group:
+        # Check if the user is the owner of the group
+        if user == post.co_creation_group.owner:
+            return True
+
+        # Check if the user is a member of the group
+        return user in post.co_creation_group.members.all()
+    return False
+
+
+
+def edit_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    # Check if co-creation is enabled and the mode is open
+    if not post.co_creation_enabled or post.co_creation_mode != 'open':
+        messages.error(request, "Edytowanie tego posta nie jest dozwolone.")
+        return redirect('post-detail', pk=post.pk)
+
+    # Check if the user is part of the collaboration group, the owner of the group, or the author
+    if not user_in_collaboration_group(request.user, post) and request.user != post.author:
+        messages.error(request, "Nie masz uprawnień do edycji tego posta.")
+        return redirect('post-detail', pk=post.pk)
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Post został pomyślnie zaktualizowany.")
+            return redirect('post-detail', pk=post.pk)
+    else:
+        form = PostForm(instance=post)
+
+    context = {
+        'form': form,
+        'post': post
+    }
+    return render(request, 'blog/post_edit.html', context)
+
+
+@login_required
+def propose_edit(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    # Check if co-creation is enabled and the mode is closed
+    if not post.co_creation_enabled or post.co_creation_mode != 'closed':
+        messages.error(request, "Proponowanie zmian dla tego posta nie jest dozwolone.")
+        return redirect('post-detail', pk=post.pk)
+
+    # Check if the user is part of the collaboration group or the author
+    if not user_in_collaboration_group(request.user, post) and request.user != post.author:
+        messages.error(request, "Nie masz uprawnień do proponowania zmian dla tego posta.")
+        return redirect('post-detail', pk=post.pk)
+
+    # Process the proposal form
+    if request.method == 'POST':
+        form = PostEditProposalForm(request.POST)
+        if form.is_valid():
+            proposal = form.save(commit=False)
+            proposal.post = post
+            proposal.proposer = request.user
+            proposal.save()
+            messages.success(request, "Twoja propozycja zmian została przesłana do zatwierdzenia.")
+            return redirect('post-detail', pk=post.pk)
+    else:
+        form = PostEditProposalForm(initial={'title': post.title, 'content': post.content})
+
+    context = {
+        'form': form,
+        'post': post
+    }
+    return render(request, 'blog/propose_edit.html', context)
+
 
 def home(request):
     context = {
         'posts': Post.objects.all()
     }
     return render(request, 'blog/home.html', context)
+
+
+@login_required
+def review_proposals(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    if request.user != post.author:
+        messages.error(request, "Nie masz uprawnień do przeglądania propozycji zmian dla tego posta.")
+        return redirect('post-detail', pk=post.pk)
+
+    proposals = post.edit_proposals.filter(is_approved=None)
+
+    context = {
+        'post': post,
+        'proposals': proposals
+    }
+    return render(request, 'blog/review_proposals.html', context)
+
+
+@login_required
+def approve_proposal(request, post_pk, proposal_pk):
+    post = get_object_or_404(Post, pk=post_pk)
+    proposal = get_object_or_404(PostEditProposal, pk=proposal_pk, post=post)
+
+    if request.user != post.author:
+        messages.error(request, "Nie masz uprawnień do zatwierdzania tej propozycji.")
+        return redirect('post-detail', pk=post.pk)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'approve':
+            post.title = proposal.title
+            post.content = proposal.content
+            post.save()
+            proposal.is_approved = True
+            proposal.date_reviewed = timezone.now()
+            proposal.save()
+            messages.success(request, "Propozycja została zatwierdzona i zmiany zostały zastosowane.")
+        elif action == 'reject':
+            proposal.is_approved = False
+            proposal.date_reviewed = timezone.now()
+            proposal.save()
+            messages.success(request, "Propozycja została odrzucona.")
+        return redirect('review-proposals', pk=post.pk)
+
+    context = {
+        'post': post,
+        'proposal': proposal
+    }
+    return render(request, 'blog/approve_proposal.html', context)
 
 
 class PostListView(ListView):
@@ -24,22 +157,46 @@ class PostListView(ListView):
     ordering = ['-date_posted']
     paginate_by = 5
 
+    def get_queryset(self):
+        user = self.request.user
+
+        return Post.objects.filter(
+            Q(visibility=True) |  # Posts visible to everyone
+            Q(group__members=user) |  # Posts visible to the group members
+            Q(group__owner=user)  # Posts visible to the group owner
+        ).distinct().order_by('-date_posted')
+
 
 class UserPostListView(ListView):
     model = Post
     template_name = 'blog/user_posts.html'
     context_object_name = 'posts'
-    ordering = ['-date_posted']
     paginate_by = 5
 
     def get_queryset(self):
-        if Post.visibility:
-            user = get_object_or_404(User, username=self.kwargs.get('username'))
-            return Post.objects.filter(author=user).order_by('-date_posted')
+        user = self.request.user
+        profile_user = get_object_or_404(User, username=self.kwargs.get('username'))
+
+        # Get posts authored by the profile user, visible to everyone, or specifically to this user's groups
+        return Post.objects.filter(
+            Q(author=profile_user) &
+            (Q(visibility=True) |
+            Q(group__members=user) |
+            Q(group__owner=user))
+        ).distinct().order_by('-date_posted')
 
 
 class PostDetailView(DetailView):
     model = Post
+
+    def get_object(self, queryset=None):
+        post = super().get_object(queryset=queryset)
+        user = self.request.user
+
+        if post.visibility or user == post.author or user == post.group.owner or user in post.group.members.all():
+            return post
+        else:
+            raise PermissionDenied("You do not have permission to view this post.")
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):

@@ -1,0 +1,28 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<div class="content-section">
+    <h2>Przejrzyj propozycję zmian</h2>
+    <p><strong>Proponowane przez:</strong> {{ proposal.proposer.username }}</p>
+    <p><strong>Data propozycji:</strong> {{ proposal.date_proposed|date:"D, d N Y H:i" }}</p>
+
+    <h3>Porównanie zmian</h3>
+    <div class="mt-3">
+        <h4>Obecny tytuł:</h4>
+        <p>{{ post.title }}</p>
+        <h4>Proponowany tytuł:</h4>
+        <p>{{ proposal.title }}</p>
+
+        <h4>Obecna treść:</h4>
+        <div class="border p-3">{{ post.content|safe }}</div>
+        <h4>Proponowana treść:</h4>
+        <div class="border p-3">{{ proposal.content|safe }}</div>
+    </div>
+
+    <form method="POST" class="mt-4">
+        {% csrf_token %}
+        <button name="action" value="approve" class="btn btn-success">Zatwierdź</button>
+        <button name="action" value="reject" class="btn btn-danger">Odrzuć</button>
+        <a href="{% url 'review-proposals' post.pk %}" class="btn btn-secondary">Powrót</a>
+    </form>
+</div>
+{% endblock content %}

@@ -2,17 +2,23 @@
 {% block content %}
     <article class="media content-section">
         <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
-        <div class="media-body"><div class="article-metadata">
-            <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
-            <small class="text-muted">{{ object.date_posted|date:'D, d N Y H:i' }}</small>
-            {% if object.author == user %}
-                <div>
-                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Edytuj</a>
-                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Usuń</a>
-                </div>
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+                <small class="text-muted">{{ object.date_posted|date:'D, d N Y H:i' }}</small>
+                {% if object.author == user %}
+                    <div>
+                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Edytuj</a>
+                        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Usuń</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Only show the version history link if the user is the author or is in the co-creation group -->
+            {% if object.author == user or user in object.co_creation_group.members.all %}
+                <a href="{% url 'post-versions' object.pk %}">Zobacz historię wersji</a>
             {% endif %}
-        </div>
-            <a href="{% url 'post-versions' post.pk %}">Zobacz historię wersji</a>
+
             <h2 class="article-content">{{ object.title }}</h2>
             <p class="article-content">{{ object.content|safe }}</p>
             <br><br>

@@ -20,14 +20,9 @@ from django.core.exceptions import PermissionDenied
 
 def user_in_collaboration_group(user, post):
     if post.co_creation_group:
-        # Check if the user is the owner of the group
-        if user == post.co_creation_group.owner:
+        if user == post.co_creation_group.owner or user in post.co_creation_group.members.all():
             return True
-
-        # Check if the user is a member of the group
-        return user in post.co_creation_group.members.all()
     return False
-
 
 
 def edit_post(request, pk):
@@ -152,38 +147,51 @@ def approve_proposal(request, post_pk, proposal_pk):
 
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/home.html'
+    template_name = 'blog/home.html'  # Ensure this points to the correct template
     context_object_name = 'posts'
     ordering = ['-date_posted']
     paginate_by = 5
 
     def get_queryset(self):
         user = self.request.user
-
-        return Post.objects.filter(
-            Q(visibility=True) |  # Posts visible to everyone
-            Q(group__members=user) |  # Posts visible to the group members
-            Q(group__owner=user)  # Posts visible to the group owner
-        ).distinct().order_by('-date_posted')
+        if user.is_authenticated:
+            # Include public posts and posts visible to the user
+            return Post.objects.filter(
+                Q(visibility=True) |  # Public posts
+                Q(author=user) |  # Posts authored by the user
+                Q(co_creation_group__members=user) |  # Posts in groups where user is a member
+                Q(co_creation_group__owner=user)  # Posts in groups where user is the owner
+            ).distinct().order_by('-date_posted')
+        else:
+            # Only include public posts for anonymous users
+            return Post.objects.filter(visibility=True).order_by('-date_posted')
 
 
 class UserPostListView(ListView):
     model = Post
     template_name = 'blog/user_posts.html'
     context_object_name = 'posts'
+    ordering = ['-date_posted']
     paginate_by = 5
 
     def get_queryset(self):
-        user = self.request.user
-        profile_user = get_object_or_404(User, username=self.kwargs.get('username'))
+        viewer = self.request.user
+        author = get_object_or_404(User, username=self.kwargs.get('username'))
 
-        # Get posts authored by the profile user, visible to everyone, or specifically to this user's groups
-        return Post.objects.filter(
-            Q(author=profile_user) &
-            (Q(visibility=True) |
-            Q(group__members=user) |
-            Q(group__owner=user))
-        ).distinct().order_by('-date_posted')
+        if viewer.is_authenticated:
+            # Include public posts and posts visible to the viewer
+            return Post.objects.filter(
+                Q(author=author) &
+                (
+                        Q(visibility=True) |  # Public posts by the author
+                        Q(author=viewer) |  # If the viewer is the author
+                        Q(co_creation_group__members=viewer) |  # If the viewer is a group member
+                        Q(co_creation_group__owner=viewer)  # If the viewer is the group owner
+                )
+            ).distinct().order_by('-date_posted')
+        else:
+            # Only include public posts by the author for anonymous users
+            return Post.objects.filter(author=author, visibility=True).order_by('-date_posted')
 
 
 class PostDetailView(DetailView):

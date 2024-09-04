@@ -21,11 +21,13 @@
 
         {% if object.co_creation_enabled %}
             {% if object.co_creation_mode == 'open' %}
-                {% if user == object.author or user == object.co_creation_group.owner or user|user_in_collaboration_group:object %}
+                {% if user == object.author or user == object.co_creation_group.owner or user in object.co_creation_group.members.all %}
+                    <!-- Show Edit button for the author, group owner, and all group members -->
                     <a href="{% url 'edit-post' object.pk %}" class="btn btn-primary mt-2">Edytuj post</a>
                 {% endif %}
             {% elif object.co_creation_mode == 'closed' %}
-                {% if user == object.author or user == object.co_creation_group.owner or user|user_in_collaboration_group:object %}
+                {% if user == object.author or user == object.co_creation_group.owner or user in object.co_creation_group.members.all %}
+                    <!-- Show "Propose Changes" button for author, group owner, and all group members -->
                     <a href="{% url 'propose-edit' object.pk %}" class="btn btn-primary mt-2">Zaproponuj zmiany</a>
                 {% endif %}
             {% endif %}

@@ -29,7 +29,8 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'co_creation_enabled', 'co_creation_mode', 'co_creation_group', 'visibility', 'group']
+        fields = ['title', 'content', 'co_creation_enabled', 'co_creation_mode', 'co_creation_group', 'visibility',
+                  'group', 'uploaded_file']
 
 
 class PostEditProposalForm(forms.ModelForm):
